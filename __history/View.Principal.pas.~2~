@@ -1,0 +1,98 @@
+unit View.Principal;
+
+interface
+
+uses
+  Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics,
+  Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.StdCtrls, Vcl.ComCtrls,
+  dxGDIPlusClasses, Vcl.ExtCtrls;
+
+type
+  TfrmPrincipal = class(TForm)
+    Panel5: TPanel;
+    Panel1: TPanel;
+    imgClose: TImage;
+    imgMinimize: TImage;
+    imgMax: TImage;
+    Panel2: TPanel;
+    Panel3: TPanel;
+    RichEdit: TRichEdit;
+    PN_EVENTOS: TPanel;
+    Panel4: TPanel;
+    lbStatus: TLabel;
+    frmPrincipal: TPanel;
+    btGeraCodigo: TPanel;
+    Panel6: TPanel;
+    Edit1: TEdit;
+    Panel7: TPanel;
+    Label1: TLabel;
+    procedure Panel1MouseDown(Sender: TObject; Button: TMouseButton;
+      Shift: TShiftState; X, Y: Integer);
+    procedure imgMinimizeClick(Sender: TObject);
+    procedure imgCloseClick(Sender: TObject);
+    procedure imgMaxClick(Sender: TObject);
+  private
+    { Private declarations }
+    function GetBorderSpace: Integer;
+    function IsBorderless: Boolean;
+    procedure WMNCCalcSize(var Msg: TWMNCCalcSize); message WM_NCCALCSIZE;
+    procedure WM_NCHitTest(var Msg: TWMNCHitTest);
+    { Private declarations }
+  protected
+    procedure Paint; override;
+    procedure Resize; override;
+  public
+    { Public declarations }
+  end;
+
+var
+  frmPrincipal: TfrmPrincipal;
+
+implementation
+
+function TfrmPrincipal.IsBorderless: Boolean;
+begin
+  Result := BorderStyle in [bsNone, bsToolWindow, bsSizeToolWin];
+end;
+
+procedure TfrmPrincipal.imgCloseClick(Sender: TObject);
+begin
+  Close;
+end;
+
+procedure TfrmPrincipal.imgMaxClick(Sender: TObject);
+begin
+  if WindowState <> wsMaximized then
+    WindowState := wsMaximized
+  else
+    WindowState := wsNormal;
+end;
+
+procedure TfrmPrincipal.imgMinimizeClick(Sender: TObject);
+begin
+  Application.Minimize;
+end;
+
+procedure TfrmPrincipal.Paint;
+begin
+  inherited;
+  if (WindowState = wsNormal) and (not IsBorderless) then
+  begin
+    Canvas.Pen.Color := clBlack;
+    Canvas.MoveTo(0, 0);
+    Canvas.LineTo(Width, 0);
+  end;
+end;
+
+{$R *.dfm}
+
+procedure TfrmPrincipal.Panel1MouseDown(Sender: TObject; Button: TMouseButton;
+  Shift: TShiftState; X, Y: Integer);
+const
+  sc_DragMove = $F012;
+begin
+  ReleaseCapture;
+  Perform(wm_SysCommand, sc_DragMove, 0);
+end;
+
+end.
